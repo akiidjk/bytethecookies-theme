@@ -5,6 +5,19 @@
     {{ partial "collapsible-menu.html" (dict "type" "toc" "context" . "enable" $enable_collapsible_toc) }}
 {{ end }}
 
+
+<div class="tags">
+  {{ range .Params.tags }}
+    {{ partial "badge.html" . }}
+  {{ end }}
+</div>
+
+<div>
+  <p class="date">
+    Last edit: {{ .Date | time.Format ":date_medium" }}
+  </p>
+</div>
+
 {{ if .Content }}
     <div class="content-margin">
         {{- partial "content.html" (dict "ctx" . "content" .Content) -}}
