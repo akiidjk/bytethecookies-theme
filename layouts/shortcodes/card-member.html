@@ -2,12 +2,16 @@
 .Site.Data.members.members }} {{ range $customConfig }} {{ $image := .image }}
 {{ $name := .name }} {{ $github := .github }} {{ $handle := .handle }} {{ $role
 := .role }} {{ $categories := .categories }}
-<!-- Questo è già una lista di stringhe -->
 
 <div class="card-members">
   <div class="content-container">
     <div class="div-img-members">
-      <img src="{{ $image }}" width="100%" height="100%" />
+      <img
+        src="{{ $image }}"
+        width="100%"
+        height="100%"
+        alt="Logo bytethecookies"
+      />
     </div>
     <div class="div-text">
       <h3 class="name-members">{{ $name }}</h3>
@@ -24,9 +28,8 @@
     </div>
   </div>
   <div class="categories-container">
-    {{ range $categories }} {{ $category := . }}
-    <!-- Ogni elemento di $categories è già una stringa -->
-    {{ $emoji := index $emojiMap $category }}
+    {{ range $categories }} {{ $category := . }} {{ $emoji := index $emojiMap
+    $category }}
     <p class="categories-members categories-color-{{ lower $category }}">
       {{ $emoji }} {{ $category }}
     </p>
