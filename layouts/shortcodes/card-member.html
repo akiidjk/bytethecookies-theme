@@ -1,20 +1,31 @@
 {{ $emojiMap := .Site.Params.categoryEmojis }} {{ $customConfig :=
 .Site.Data.members.members }} {{ range $customConfig }} {{ $image := .image }}
 {{ $name := .name }} {{ $github := .github }} {{ $handle := .handle }} {{ $role
-:= .role }} {{ $categories := .categories }}
+:= .role }} {{ $categories := .categories }} {{ $link_etherscan :=
+.link_etherscan }}
+
+<script
+  src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+  type="application/javascript"
+></script>
 
 <div class="card-members">
   <div class="content-container">
     <div class="div-img-members">
-      <img
-        src="{{ $image }}"
-        width="100%"
-        height="100%"
-        alt="Logo bytethecookies"
-      />
+      <div class="spinner"></div>
+      <a href="{{ $link_etherscan }}" target="_blank" rel="noopener noreferrer"
+        ><img
+          class="nftImage"
+          src="{{ $image }}"
+          width="100%"
+          height="100%"
+          alt="Logo bytethecookies"
+          style="display: none"
+        />
+      </a>
     </div>
     <div class="div-text">
-      <h3 class="name-members">{{ $name }}</h3>
+      <h3 class="name-members" id="name">{{ $name }}</h3>
       <br />
       <a
         style="text-decoration: none; color: white"
@@ -37,3 +48,101 @@
   </div>
 </div>
 {{ end }}
+
+<script>
+  const contractAddress = "0xee9db83A589c76Bd97eBf63B95f33cB44BEA36f1";
+
+  const namesToAddress = {
+    //"Alessandro Cavaliere": "0xCEA0C88efD9b1508275bf59aC5a9f0923013aB53",
+    //"Davide Amoruso": "0x53b2dac7bb0bda548cf241facd51c2628664c216",
+    //"Francesco Memoli": "0x4490716bcee5153eB0f92e6329FE5f4f9a8b4524",
+    //"Vito Altieri": "0x9cff19aaf6f6b46639bd66a0a37de941325baff2",
+    //"Marco Santoriello": "0x9a4267d4B1e221f9Cc4c4596367592E5E85F288b",
+    //"Daniele Liguori": "0xb87aca2583f69770bd11a913df6cbbdd68b13986",
+    //"Daniele Migliore": "0x16f87a40142e062d1aceffa4d925114f989f9370",
+    //"Salvatore Ruocco": "0x2c88ef658f7ee732d0f885bca44f10491b0bb3ca",
+    //"Jose Sgariglia": "0x523284b365300f44eff3ffe6e243a688b60e3d9f",
+    //"Salvatore Russo": "0xC39530265b63E7918515e3652c9b5b66D574A4DA",
+    //"Walter D'ambrosio": "0x7070f9d7b99692d0ebea98e5ba85fdb86d04306a",
+  };
+  async function fetchTokenURIs(contractAddress, abi, address) {
+    const provider = new ethers.providers.JsonRpcProvider(
+      "https://eth-sepolia.g.alchemy.com/v2/EBEf6F0QcKepxVRoTYFdUsIj7iHd6NMo"
+    );
+    const contract = new ethers.Contract(contractAddress, abi, provider);
+    try {
+      const uris = await contract.getAllTokenUrisForAddress(address);
+      return uris;
+    } catch (error) {
+      console.error("Errore durante la chiamata di tokenURI:", error);
+      return null;
+    }
+  }
+
+  async function loadABI() {
+    const abi = [
+      {
+        type: "function",
+        name: "getAllTokenUrisForAddress",
+        inputs: [{ name: "user", type: "address", internalType: "address" }],
+        outputs: [{ name: "", type: "string[]", internalType: "string[]" }],
+        stateMutability: "view",
+      },
+    ];
+    return abi;
+  }
+
+  async function updateAllTokenURIsAndImages() {
+    const abi = await loadABI();
+    const members = document.querySelectorAll(".card-members");
+
+    const promises = Array.from(members).map(async (member) => {
+      const name = member.querySelector(".name-members").innerText;
+      const imageElement = member.querySelector(".nftImage");
+      const spinner = member.querySelector(".spinner");
+
+      if (name && namesToAddress[name]) {
+        const address = namesToAddress[name];
+        const uris = await fetchTokenURIs(contractAddress, abi, address);
+
+        if (uris && uris.length > 0) {
+          const lastUri = uris[uris.length - 1];
+          return new Promise((resolve) => {
+            const img = new Image();
+            img.src = lastUri;
+            img.onload = () => {
+              imageElement.src = lastUri;
+              spinner.style.display = "none";
+              imageElement.style.display = "block";
+              resolve();
+            };
+            img.onerror = () => {
+              imageElement.src = "/icons/cookie.svg";
+              spinner.style.display = "none";
+              imageElement.style.display = "block";
+              resolve();
+            };
+          });
+        } else {
+          imageElement.src = "/icons/cookie.svg";
+          spinner.style.display = "none";
+          imageElement.style.display = "block";
+        }
+      } else {
+        imageElement.src = "/icons/cookie.svg";
+        spinner.style.display = "none";
+        imageElement.style.display = "block";
+      }
+      return Promise.resolve();
+    });
+
+    await Promise.all(promises);
+
+    const mainContainer = document.getElementsByClassName("main_container");
+    if (mainContainer.length > 0) {
+      mainContainer[0].classList.add("end_loading");
+    }
+  }
+
+  updateAllTokenURIsAndImages();
+</script>
