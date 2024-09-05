@@ -95,8 +95,7 @@
   async function updateAllTokenURIsAndImages() {
     const abi = await loadABI();
     const members = document.querySelectorAll(".card-members");
-
-    const promises = Array.from(members).map(async (member) => {
+    async function updateMember(member) {
       const name = member.querySelector(".name-members").innerText;
       const imageElement = member.querySelector(".nftImage");
       const spinner = member.querySelector(".spinner");
@@ -104,30 +103,35 @@
       if (name && namesToAddress[name]) {
         const address = namesToAddress[name];
         const uris = await fetchTokenURIs(contractAddress, abi, address);
-        //console.log("URIs for", name, ":", uris[0]);
+
         if (uris && uris.length > 0) {
-          const lastUri = uris[0];
-          //console.log("Last URI for", name, ":", lastUri);
+          const lastUri = uris[uris.length - 1]; 
           let base64String = lastUri.split(",")[1];
-          decodedImageUri = JSON.parse(atob(base64String)).image;
-          console.log("Decoded Image for", name, "URI:", decodedImageUri);
-          return new Promise((resolve) => {
+
+          try {
+            let decodedImageUri = JSON.parse(atob(base64String)).image;
             const img = new Image();
-            console.log("Decoded Image for", name, "URI:", decodedImageUri);
-            img.src = decodedImageUri;
+
             img.onload = () => {
               imageElement.src = decodedImageUri;
               spinner.style.display = "none";
               imageElement.style.display = "block";
-              resolve();
             };
+
             img.onerror = () => {
               imageElement.src = "/icons/cookie.svg";
               spinner.style.display = "none";
               imageElement.style.display = "block";
-              resolve();
             };
-          });
+
+            img.src = decodedImageUri;
+
+          } catch (e) {
+            console.error("Errore durante la decodifica o il caricamento dell'immagine:", e);
+            imageElement.src = "/icons/cookie.svg";
+            spinner.style.display = "none";
+            imageElement.style.display = "block";
+          }
         } else {
           imageElement.src = "/icons/cookie.svg";
           spinner.style.display = "none";
@@ -138,8 +142,9 @@
         spinner.style.display = "none";
         imageElement.style.display = "block";
       }
-      return Promise.resolve();
-    });
+    }
+
+    const promises = Array.from(members).map(member => updateMember(member));
 
     await Promise.all(promises);
 
