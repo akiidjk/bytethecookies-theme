@@ -230,8 +230,8 @@ h6 {
 
 .div-img-members {
   display: inline-block;
-  width: 20%;
-  height: auto;
+  // width: 100%;
+  // height: auto;
 }
 
 .tag-members:hover {
@@ -248,18 +248,20 @@ h6 {
 }
 
 .categories-container {
-  width: 60%;
+  width: 20%;
   margin-left: auto;
   padding: 8px;
+  display: flex;
+  flex-direction: column;
 }
 
 .categories-members {
   padding: 2px 8px;
   font-size: 12px;
   display: inline-block;
-  margin: 3px auto;
+  margin: 10px auto 0px 0px;
   border-radius: 6px;
-  color: white
+  color: white;
 }
 
 .categories-color-web {
@@ -298,6 +300,12 @@ h6 {
   background-color: #16384e;
 }
 // Loader
+
+.nftImage{
+  width: 200%;
+  height: auto;
+  border-radius: 12px;
+}
 
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
