@@ -38,6 +38,10 @@
         {{ template "_internal/google_analytics.html" . }}
     {{ end }}
 
+    {{ if .Param "math" }}
+        {{ partialCached "math.html" . }}
+    {{ end }}
+
     {{/*  Dark theme: inline in `head` to avoid FOUC  */}}
     <script>
         if (!('theme' in localStorage)) {
