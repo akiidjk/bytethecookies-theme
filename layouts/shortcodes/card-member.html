@@ -64,6 +64,11 @@
     "Salvatore Russo": "0xC39530265b63E7918515e3652c9b5b66D574A4DA",
     "Daniele Liguori": "0xb87aca2583f69770bd11a913df6cbbdd68b13986",
     "Walter D'Ambrosio": "0x7070f9d7b99692d0ebea98e5ba85fdb86d04306a",
+    "Luigi Landi": "0x1BCaBBCb237b3AaDAdedf5B0bee2035F195A912C",
+    "Giulio Incoronato": "0x106571aDc955711066ef42CB510CABac2713B111",
+    "Antonio Facchiano": "0x2fD394df36381857639d633aad2CB4DDdF40b9D8",
+    "Alessandro Manfredi": "0xe873f8aD808312d07C1B925856222dc89f7d0018",
+    "Giorgio": "0x3361AD6f9c5607E6D9957D02dd9F52129c91b59a",
   };
 
   async function fetchTokenURIs(contractAddress, abi, address) {
@@ -120,7 +125,7 @@
             };
 
             img.onerror = () => {
-              imageElement.src = "/icons/cookie.svg";
+              imageElement.src = "/icons/logo.png";
               spinner.style.display = "none";
               imageElement.style.display = "block";
             };
@@ -131,17 +136,17 @@
               "Errore durante la decodifica o il caricamento dell'immagine:",
               e
             );
-            imageElement.src = "/icons/cookie.svg";
+            imageElement.src = "/icons/logo.png";
             spinner.style.display = "none";
             imageElement.style.display = "block";
           }
         } else {
-          imageElement.src = "/icons/cookie.svg";
+          imageElement.src = "/icons/logo.png";
           spinner.style.display = "none";
           imageElement.style.display = "block";
         }
       } else {
-        imageElement.src = "/icons/cookie.svg";
+        imageElement.src = "/icons/logo.png";
         spinner.style.display = "none";
         imageElement.style.display = "block";
       }
