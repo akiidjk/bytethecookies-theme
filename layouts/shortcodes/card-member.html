@@ -37,12 +37,11 @@
       <br />
       <p class="tag-school">{{ $role }}</p>
     </div>
-    <div class="categories-container">
-      {{ range $categories }} {{ $category := . }} {{ $emoji := index $emojiMap
-      $category }}
-      <p class="categories-members categories-color-{{ lower $category }}">
-        {{ $emoji }} {{ $category }}
-      </p>
+    <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;padding: 8px 8px 0px 0px ;">
+      {{ range $categories }}
+        {{ $category := . }}
+        {{ $emoji := index $emojiMap $category }}
+        <img src="{{ $emoji }}" alt="{{ $category }}" style="display: block; width: 120px; height: auto;" />
       {{ end }}
     </div>
   </div>
